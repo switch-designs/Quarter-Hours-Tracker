@@ -1,0 +1,462 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quarter Hours Tracker</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f6;color:#18212b;font-family:Arial,sans-serif}
+header{background:linear-gradient(135deg,#17212b,#31556f);color:white;text-align:center;padding:25px 15px}
+h1{margin:0 0 5px;font-size:28px}header p{margin:0;opacity:.82;font-size:13px}
+.tabs{max-width:940px;margin:18px auto 0;padding:0 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.tabs button{border:0;border-radius:9px 9px 0 0;padding:13px 7px;font-weight:700;background:#d9dfe5;cursor:pointer}.tabs button.active{background:#fff}
+main{max-width:940px;margin:0 auto 30px;background:#fff;padding:20px;border-radius:0 0 12px 12px;box-shadow:0 5px 22px #0001}
+.panel{display:none}.panel.active{display:block}h2{margin-top:0}h3{margin-top:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{border:1px solid #dfe5ea;border-radius:11px;padding:16px;margin-top:14px}
+label{display:block;font-weight:700;font-size:13px;margin-bottom:7px}input,select{width:100%;padding:12px;border:1px solid #bac4ce;border-radius:8px;font-size:16px;background:#fff}
+button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:pointer}.primary{background:#1769aa;color:#fff}.danger{background:#b42318;color:#fff}
+.full{width:100%;margin-top:10px}.small{padding:8px 12px;margin-top:7px}
+.notice{background:#f4f7fa;border:1px solid #e0e5ea;border-radius:9px;padding:12px;margin:14px 0;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.stat{border:1px solid #e0e5ea;border-radius:9px;padding:13px;background:#fafbfc}
+.stat b{display:block;font-size:21px;margin-top:5px}.over{color:#b42318}.under{color:#167647}
+.pto-row{display:grid;grid-template-columns:1fr 150px auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #e7ebee}
+.pto-row label{margin:0}table{width:100%;border-collapse:collapse;margin-top:16px;font-size:13px}th,td{padding:10px;border-bottom:1px solid #e5e9ed;text-align:left}th{background:#f5f7f9}
+@media(max-width:700px){.grid,.stats{grid-template-columns:1fr}.tabs{grid-template-columns:repeat(2,1fr)}.pto-row{grid-template-columns:1fr}}
+.money{font-weight:400;display:block;margin-top:4px}.log-location{font-weight:700;margin-bottom:5px}</style><style>
+.password-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;align-items:center;justify-content:center}
+.password-modal.show{display:flex}
+.password-box{background:#fff;border-radius:18px;padding:22px;width:min(86vw,360px);box-shadow:0 12px 40px rgba(0,0,0,.35);text-align:center}
+.password-box h3{margin:0 0 14px}
+.password-box input{width:100%;box-sizing:border-box;padding:12px;font-size:24px;text-align:center;letter-spacing:7px;border:1px solid #bbb;border-radius:10px}
+.password-actions{display:flex;gap:10px;margin-top:14px}
+.password-actions button{flex:1}
+</style>
+<style>
+.balance{display:block;font-size:.88em;margin-top:4px}
+.balance.positive{color:#16804b}
+.balance.negative{color:#b42318}
+.balance.even{color:#555}
+</style>
+<style>
+.backup-tools{margin:12px 0;padding:10px;border:1px solid #bbb;border-radius:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.backup-tools span{font-size:.85em;opacity:.8}
+</style>
+<link rel="manifest" href="./manifest.webmanifest"></head><body>
+<header><h1>Quarter Hours Tracker</h1><p>July 4, 2026 – October 2, 2026</p></header>
+<div class="tabs"><button class="active" onclick="tab('w17',this)">W17</button><button onclick="tab('w39',this)">W39</button><button onclick="tab('personal',this)">Personal</button><button onclick="tab('log',this)">Log</button></div>
+<main>
+
+<section id="w17" class="panel active">
+<h2>W17 Hours</h2>
+<div class="grid">
+<div class="card"><label>Pay Period</label><select id="w17period"><option>Week 1 — Jul 4 – Jul 10, 2026</option><option>Week 2 — Jul 11 – Jul 17, 2026</option><option>Week 3 — Jul 18 – Jul 24, 2026</option><option>Week 4 — Jul 25 – Jul 31, 2026</option><option>Week 5 — Aug 1 – Aug 7, 2026</option><option>Week 6 — Aug 8 – Aug 14, 2026</option><option>Week 7 — Aug 15 – Aug 21, 2026</option><option>Week 8 — Aug 22 – Aug 28, 2026</option><option>Week 9 — Aug 29 – Sep 4, 2026</option><option>Week 10 — Sep 5 – Sep 11, 2026</option><option>Week 11 — Sep 12 – Sep 18, 2026</option><option>Week 12 — Sep 19 – Sep 25, 2026</option><option>Week 13 — Sep 26 – Oct 2, 2026</option></select></div>
+<div class="card">
+<label>Hours to add</label><input id="w17hours" type="number" step="any" placeholder="Enter any number">
+<h3>PTO Hours</h3><div class="pto-row"><label>Daily Roberts PTO hours</label><input id="w17pto_0" type="number" step="any" placeholder="PTO"></div><div class="pto-row"><label>Ray Young PTO hours</label><input id="w17pto_1" type="number" step="any" placeholder="PTO"></div>
+<button class="primary full" onclick="submitLocation('w17')">Submit Hours + PTO</button>
+<button class="danger full" onclick="clearSelected('w17')">Clear Selected Period</button>
+</div></div>
+<div class="notice"><b>Tracking only:</b> 75 weekly, 150 biweekly, and 975 quarterly. Entries are never rejected for going over. PTO is deducted from regular hours counted.</div>
+<div id="w17stats"></div><div id="w17log"></div>
+</section>
+
+<section id="w39" class="panel">
+<h2>W39 Hours</h2>
+<div class="grid">
+<div class="card"><label>Pay Period</label><select id="w39period"><option>Week 1 — Jul 4 – Jul 10, 2026</option><option>Week 2 — Jul 11 – Jul 17, 2026</option><option>Week 3 — Jul 18 – Jul 24, 2026</option><option>Week 4 — Jul 25 – Jul 31, 2026</option><option>Week 5 — Aug 1 – Aug 7, 2026</option><option>Week 6 — Aug 8 – Aug 14, 2026</option><option>Week 7 — Aug 15 – Aug 21, 2026</option><option>Week 8 — Aug 22 – Aug 28, 2026</option><option>Week 9 — Aug 29 – Sep 4, 2026</option><option>Week 10 — Sep 5 – Sep 11, 2026</option><option>Week 11 — Sep 12 – Sep 18, 2026</option><option>Week 12 — Sep 19 – Sep 25, 2026</option><option>Week 13 — Sep 26 – Oct 2, 2026</option></select></div>
+<div class="card">
+<label>Hours to add</label><input id="w39hours" type="number" step="any" placeholder="Enter any number">
+<h3>PTO Hours</h3><div class="pto-row"><label>Daily Roberts PTO hours</label><input id="w39pto_0" type="number" step="any" placeholder="PTO"></div><div class="pto-row"><label>Amari Jordan PTO hours</label><input id="w39pto_1" type="number" step="any" placeholder="PTO"></div>
+<button class="primary full" onclick="submitLocation('w39')">Submit Hours + PTO</button>
+<button class="danger full" onclick="clearSelected('w39')">Clear Selected Period</button>
+</div></div>
+<div class="notice"><b>Tracking only:</b> 75 weekly, 150 biweekly, and 975 quarterly. Entries are never rejected for going over. PTO is deducted from regular hours counted.</div>
+<div id="w39stats"></div><div id="w39log"></div>
+</section>
+<section id="personal" class="panel"><h2>Personal Hours</h2><div class="card"><label>Pay Period</label><select id="personalperiod"><option>Week 1 — Jul 4 – Jul 10, 2026</option><option>Week 2 — Jul 11 – Jul 17, 2026</option><option>Week 3 — Jul 18 – Jul 24, 2026</option><option>Week 4 — Jul 25 – Jul 31, 2026</option><option>Week 5 — Aug 1 – Aug 7, 2026</option><option>Week 6 — Aug 8 – Aug 14, 2026</option><option>Week 7 — Aug 15 – Aug 21, 2026</option><option>Week 8 — Aug 22 – Aug 28, 2026</option><option>Week 9 — Aug 29 – Sep 4, 2026</option><option>Week 10 — Sep 5 – Sep 11, 2026</option><option>Week 11 — Sep 12 – Sep 18, 2026</option><option>Week 12 — Sep 19 – Sep 25, 2026</option><option>Week 13 — Sep 26 – Oct 2, 2026</option></select></div><div class="card"><div class="notice">Personal target: <b>585 hours</b>.</div>
+<label>Hours to add</label><input id="personalhours" type="number" step="any" placeholder="Enter any number"><h3>PTO Hours</h3><input id="personalpto" type="number" step="any" placeholder="Enter PTO hours"><button class="primary" onclick="addPersonal()">Submit Hours + PTO</button></div><div id="personalStats"></div><div id="personalLog"></div></section>
+<section id="log" class="panel"><h2>Complete Log — By Location</h2><div class="backup-tools">
+  <button type="button" onclick="exportTrackerData()">Backup My Data</button>
+  <button type="button" onclick="document.getElementById('importDataFile').click()">Restore Data</button>
+  <input id="importDataFile" type="file" accept=".json,application/json" style="display:none" onchange="importTrackerData(event)">
+  <span>Backup includes all W17, W39, Personal, PTO, and pay-period entries.</span>
+</div>
+<div id="allLog"></div></section>
+</main>
+<script>
+const KEY='quarterHoursTracker_v4',PW='4187',RATE=15;
+const state=JSON.parse(localStorage.getItem(KEY)||'{"w17":[],"w39":[],"personal":[],"personalPTO":[],"pto":{"w17":[[],[]],"w39":[[],[]]}}'); state.personalPTO=state.personalPTO||[];
+function total(a){return a.reduce((s,e)=>s+Number(e.hours),0)} function fmt(n){return Number(n).toLocaleString(undefined,{maximumFractionDigits:2})}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function auth(onSuccess,onCancel){
+ const modal=document.getElementById('passwordModal');
+ const input=document.getElementById('passwordInput');
+ modal.dataset.ok='';
+ modal.classList.add('show');
+ input.value='';
+ input.focus();
+ modal._success=onSuccess;
+ modal._cancel=onCancel;
+ return false;
+}
+function submitPassword(){
+ const modal=document.getElementById('passwordModal');
+ const input=document.getElementById('passwordInput');
+ if(input.value===PW){
+   modal.classList.remove('show');
+   const fn=modal._success;
+   modal._success=null; modal._cancel=null;
+   if(fn) fn();
+ }else{
+   input.value='';
+   input.focus();
+   alert('Incorrect password.');
+ }
+}
+function cancelPassword(){
+ const modal=document.getElementById('passwordModal');
+ modal.classList.remove('show');
+ const fn=modal._cancel;
+ modal._success=null; modal._cancel=null;
+ if(fn) fn();
+} function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}
+function tab(id,b){document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active')}
+function submitLocation(loc){
+ return auth(function(){ submitLocationAfterAuth(loc); });
+}
+function submitLocationAfterAuth(loc){
+ const p=document.getElementById(loc+'period').value;
+ const h=Number(document.getElementById(loc+'hours').value);
+ const peopleCount=loc==='w17'?2:2;
+ const ptoValues=Array.from({length:peopleCount},(_,i)=>Number(document.getElementById(loc+'pto_'+i).value));
+ const hasHours=h>0 && Number.isFinite(h);
+ const hasPTO=ptoValues.some(x=>x>0 && Number.isFinite(x));
+
+ if(!hasHours && !hasPTO){
+   return alert('Enter regular hours or PTO hours.');
+ }
+
+ // Only one combined entry is allowed for a location/pay period.
+ // If anything already exists for this period, the user must clear it first.
+ const alreadyEntered =
+   state[loc].some(e=>e.period===p) ||
+   state.pto[loc].some(person=>person.some(e=>e.period===p));
+
+ if(alreadyEntered){
+   return alert('This pay period already has an entry. Clear the old entry first, then enter the new hours.');
+ }
+
+ const entryId=crypto.randomUUID();
+ if(hasHours) state[loc].push({id:entryId,period:p,hours:h,date:new Date().toLocaleString(),type:'Regular',entryId});
+
+ for(let i=0;i<peopleCount;i++){
+   const ph=ptoValues[i];
+   if(ph>0 && Number.isFinite(ph)){
+     state.pto[loc][i].push({id:crypto.randomUUID(),period:p,hours:ph,date:new Date().toLocaleString(),type:'PTO',entryId});
+   }
+ }
+ document.getElementById(loc+'hours').value='';
+ for(let i=0;i<peopleCount;i++) document.getElementById(loc+'pto_'+i).value='';
+ save();
+}
+function addPTO(loc,i){
+ return auth(function(){
+   let h=Number(document.getElementById(loc+'pto_'+i).value);
+   if(!Number.isFinite(h)||h<=0)return alert('Enter valid PTO hours.');
+   let p=document.getElementById(loc+'period').value;
+   state.pto[loc][i].push({id:crypto.randomUUID(),period:p,hours:h,date:new Date().toLocaleString(),type:'PTO'});
+   document.getElementById(loc+'pto_'+i).value='';
+   save();
+ });
+}
+function addPersonal(){
+ return auth(function(){ addPersonalAfterAuth(); });
+}
+function addPersonalAfterAuth(){
+ const p=document.getElementById('personalperiod').value;
+ const h=Number(document.getElementById('personalhours').value);
+ const ph=Number(document.getElementById('personalpto').value);
+ const hasHours=h>0 && Number.isFinite(h);
+ const hasPTO=ph>0 && Number.isFinite(ph);
+
+ if(!hasHours && !hasPTO){
+   return alert('Enter personal hours or PTO hours.');
+ }
+
+ // Only one combined Personal entry is allowed for a pay period.
+ if(state.personal.some(e=>e.period===p) || state.personalPTO.some(e=>e.period===p)){
+   return alert('This pay period already has an entry. Clear the old entry first, then enter the new hours.');
+ }
+
+ const entryId=crypto.randomUUID();
+ if(hasHours) state.personal.push({id:entryId,entryId,period:p,hours:h,date:new Date().toLocaleString(),type:'Personal'});
+ if(hasPTO) state.personalPTO.push({id:crypto.randomUUID(),entryId,period:p,hours:ph,date:new Date().toLocaleString(),type:'PTO'});
+ document.getElementById('personalhours').value='';
+ document.getElementById('personalpto').value='';
+ save();
+}
+function clearEntry(kind,loc,id,i){
+ return auth(function(){ clearEntryAfterAuth(kind,loc,id,i); });
+}
+function clearEntryAfterAuth(kind,loc,id,i){
+ if(kind==='pto') state.pto[loc][i]=state.pto[loc][i].filter(e=>e.id!==id);
+ else if(kind==='personalPTO') state.personalPTO=state.personalPTO.filter(e=>e.id!==id);
+ else state[kind]=state[kind].filter(e=>e.id!==id);
+ save();
+}
+function clearSelected(loc){
+ return auth(function(){
+   let p=document.getElementById(loc+'period').value;
+   state[loc]=state[loc].filter(e=>e.period!==p);
+   state.pto[loc].forEach((a,i)=>state.pto[loc][i]=a.filter(e=>e.period!==p));
+   save();
+ });
+}
+function calc(loc,p){let regular=state[loc].filter(e=>e.period===p), rh=total(regular);let ph=state.pto[loc].reduce((s,a)=>s+total(a.filter(e=>e.period===p)),0);return {rh,ph,counted:rh-ph}}
+
+function periodWeekNumber(period){
+ const m=String(period).match(/Week\s+(\d+)/i);
+ return m?Number(m[1]):0;
+}
+function balanceLine(counted,period,targetPerWeek){
+ const week=periodWeekNumber(period);
+ if(!week)return '';
+ const expected=targetPerWeek*week;
+ const diff=counted-expected;
+ if(diff>0)return `<span class="balance positive">Positive: +${fmt(diff)} hours</span>`;
+ if(diff<0)return `<span class="balance negative">Negative: ${fmt(Math.abs(diff))} hours</span>`;
+ return `<span class="balance even">On target: 0 hours</span>`;
+}
+function cumulativeLocationCounted(loc,period){
+ const week=periodWeekNumber(period);
+ if(!week)return 0;
+ const regular=state[loc].reduce((sum,e)=>{
+   return sum + (periodWeekNumber(e.period)<=week ? Number(e.hours)||0 : 0);
+ },0);
+ const pto=state.pto[loc].reduce((sum,person)=>{
+   return sum + person.reduce((a,e)=>{
+     return a + (periodWeekNumber(e.period)<=week ? Number(e.hours)||0 : 0);
+   },0);
+ },0);
+ return regular-pto;
+}
+function variance(a,l){return a>l?`<span class="over">OVER by ${fmt(a-l)}</span>`:`<span class="under">${fmt(l-a)} under</span>`}
+function renderLoc(loc){
+ const regularTotal=total(state[loc]);
+ const ptoTotal=state.pto[loc].reduce((sum,a)=>sum+total(a),0);
+ const countedTotal=regularTotal-ptoTotal;
+ const remain=975-countedTotal;
+ document.getElementById(loc+'stats').innerHTML=`<div class="stats">
+ <div class="stat">Regular input<b>${fmt(regularTotal)}</b></div>
+ <div class="stat">PTO<b>${fmt(ptoTotal)}</b></div>
+ <div class="stat">Hours counted after PTO<b>${fmt(countedTotal)}</b>${balanceLine(cumulativeLocationCounted(loc,document.getElementById(loc+'period').value),document.getElementById(loc+'period').value,75)}</div>
+ <div class="stat">Quarter remaining<b>${fmt(remain)}</b><span class="money"><strong>Bonus Amount:</strong> ${fmt(remain)} X $15 = $${fmt(remain*RATE)}</span></div>
+ </div>`;
+ document.getElementById(loc+'log').innerHTML=locationPayPeriodLog(loc);
+}
+function locationPayPeriodLog(loc){
+ const groups={};
+ state[loc].forEach(e=>{
+   const key=e.period;
+   if(!groups[key])groups[key]={period:key,date:e.date,regular:0,pto:0};
+   groups[key].regular+=Number(e.hours);
+ });
+ state.pto[loc].forEach(a=>a.forEach(e=>{
+   const key=e.period;
+   if(!groups[key])groups[key]={period:key,date:e.date,regular:0,pto:0};
+   groups[key].pto+=Number(e.hours);
+ }));
+ const rows=Object.values(groups).sort((a,b)=>new Date(b.date)-new Date(a.date));
+ if(!rows.length)return '<div class="notice">No saved entries yet.</div>';
+ return '<table><tr><th>Date</th><th>Period</th><th>Hours / PTO</th><th>Action</th></tr>'+
+ rows.map(g=>`<tr>
+ <td>${esc(g.date)}</td>
+ <td><div class="log-location">${esc(loc.toUpperCase())}</div><div>${esc(g.period)}</div></td>
+ <td>${fmt(g.regular)}${g.pto?' + PTO '+fmt(g.pto):''}<br><strong>Counted: ${fmt(g.regular-g.pto)}</strong></td>
+ <td><button class="danger" onclick='clearPayPeriod(${JSON.stringify(loc.toUpperCase())},${JSON.stringify(g.period)})'>Clear</button></td>
+ </tr>`).join('')+'</table>';
+}
+function table(a,loc,kind){if(!a.length)return '';return '<table><tr><th>Date</th><th>Period</th><th>Hours</th><th>Action</th></tr>'+a.map(e=>`<tr><td>${esc(e.date)}</td><td>${esc(e.period)}</td><td>${fmt(e.hours)}</td><td><button class="danger" onclick="clearEntry('${loc}','${loc}','${e.id}')">Clear</button></td></tr>`).join('')+'</table>'}
+function ptoTable(loc){return ''}
+
+function personalCombinedLog(){
+ const groups={};
+ state.personal.forEach(e=>{
+   const k=e.period;
+   if(!groups[k]) groups[k]={period:k,date:e.date,regular:0,pto:0};
+   groups[k].regular+=Number(e.hours);
+ });
+ state.personalPTO.forEach(e=>{
+   const k=e.period;
+   if(!groups[k]) groups[k]={period:k,date:e.date,regular:0,pto:0};
+   groups[k].pto+=Number(e.hours);
+ });
+ const rows=Object.values(groups).sort((a,b)=>new Date(b.date)-new Date(a.date));
+ if(!rows.length)return '<div class="notice">No saved personal entries yet.</div>';
+ return '<table><tr><th>Date</th><th>Period</th><th>Hours / PTO</th><th>Action</th></tr>'+
+ rows.map(g=>`<tr><td>${esc(g.date)}</td><td><strong>Personal</strong><br>${esc(g.period)}</td><td>${fmt(g.regular)}${g.pto?' + PTO '+fmt(g.pto):''}<br><strong>Counted: ${fmt(g.regular+g.pto)}</strong></td><td><button class="danger" onclick='clearPersonalPayPeriod(${JSON.stringify(g.period)})'>Clear</button></td></tr>`).join('')+'</table>';
+}
+function clearPersonalPayPeriod(period){
+ return auth(function(){ clearPersonalPayPeriodAfterAuth(period); });
+}
+function clearPersonalPayPeriodAfterAuth(period){
+ state.personal=state.personal.filter(e=>e.period!==period);
+ state.personalPTO=state.personalPTO.filter(e=>e.period!==period);
+ save();
+}
+function biGroup(period){
+ const m=period.match(/Week (\d+)/); if(!m) return period;
+ const n=Number(m[1]);
+ if(n===1) return 'Week 1 — Jul 4 – Jul 10, 2026';
+ const pairStart=n%2===0?n:n-1;
+ const starts=['Jul 11','Jul 25','Aug 8','Aug 22','Sep 5','Sep 19'];
+ const ends=['Jul 24','Aug 7','Aug 21','Sep 4','Sep 18','Oct 2'];
+ const idx=(pairStart-2)/2;
+ return idx>=0 && idx<starts.length ? `Biweekly ${idx+1} — ${starts[idx]} – ${ends[idx]}, 2026` : period;
+}
+function biweeklyLogTable(){
+ const groups={};
+ const add=(location,period,hours,pto)=>{
+   const key=location+'|'+period;
+   if(!groups[key]) groups[key]={location,period,regular:0,pto:0};
+   if(pto) groups[key].pto += Number(hours);
+   else groups[key].regular += Number(hours);
+ };
+ state.w17.forEach(e=>add('W17',biGroup(e.period),e.hours,false));
+ state.w39.forEach(e=>add('W39',biGroup(e.period),e.hours,false));
+ state.pto.w17.forEach(a=>a.forEach(e=>add('W17',biGroup(e.period),e.hours,true)));
+ state.pto.w39.forEach(a=>a.forEach(e=>add('W39',biGroup(e.period),e.hours,true)));
+ state.personal.forEach(e=>add('Personal',e.period,e.hours,false));
+
+ const rows=Object.values(groups);
+ if(!rows.length)return '<div class="notice">No saved entries yet.</div>';
+
+ return '<table><tr><th>Location</th><th>Biweekly Period</th><th>Regular Hours</th><th>PTO</th><th>Hours Counted</th></tr>'+
+ rows.map(x=>'<tr><td><strong>'+esc(x.location)+'</strong></td><td>'+esc(x.period)+'</td><td>'+fmt(x.regular)+'</td><td>'+fmt(x.pto)+'</td><td>'+fmt(x.regular-x.pto)+'</td></tr>').join('')+
+ '</table>';
+}
+function allLogTable(a){
+ if(!a.length)return '<div class="notice">No saved entries yet.</div>';
+ const groups={};
+ a.forEach(e=>{
+   const location=e.location || (e.category && e.category.startsWith('Personal') ? 'Personal' : '');
+   const key=location+'|'+e.period;
+   if(!groups[key]) groups[key]={location,period:e.period,date:e.date,regular:0,pto:0};
+   if(e.type==='PTO' || (e.category&&e.category.startsWith('PTO'))) groups[key].pto+=Number(e.hours);
+   else groups[key].regular+=Number(e.hours);
+ });
+ const rows=Object.values(groups).sort((a,b)=>new Date(b.date)-new Date(a.date));
+ return '<table><tr><th>Date</th><th>Period</th><th>Hours</th><th>Action</th></tr>'+
+ rows.map(g=>`<tr><td>${esc(g.date)}</td><td><div class="log-location">${esc(g.location)}</div><div>${esc(g.period)}</div></td><td>${fmt(g.regular)}${g.pto ? ' + PTO '+fmt(g.pto) : ''}<br><strong>Counted: ${fmt(g.regular-g.pto)}</strong></td><td><button class="danger" onclick='clearPayPeriod(${JSON.stringify(g.location)},${JSON.stringify(g.period)})'>Clear</button></td></tr>`).join('')+'</table>';
+}
+function clearPayPeriod(location,period){
+ return auth(function(){ clearPayPeriodAfterAuth(location,period); });
+}
+function clearPayPeriodAfterAuth(location,period){
+ const loc=String(location).toLowerCase();
+ if(loc==='personal'){
+   state.personal=state.personal.filter(e=>e.period!==period);
+   state.personalPTO=state.personalPTO.filter(e=>e.period!==period);
+ } else if(loc==='w17' || loc==='w39'){
+   state[loc]=state[loc].filter(e=>e.period!==period);
+   for(let i=0;i<state.pto[loc].length;i++)
+     state.pto[loc][i]=state.pto[loc][i].filter(e=>e.period!==period);
+ }
+ save();
+}
+function clearFromAll(category,id,entryId){
+ return auth(function(){ clearFromAllAfterAuth(category,id,entryId); });
+}
+function clearFromAllAfterAuth(category,id,entryId){
+ const eid=entryId||id;
+ for(const loc of ['w17','w39']){
+   state[loc]=state[loc].filter(e=>(e.entryId||e.id)!==eid);
+   for(let i=0;i<2;i++) state.pto[loc][i]=state.pto[loc][i].filter(e=>(e.entryId||e.id)!==eid);
+ }
+ state.personal=state.personal.filter(e=>(e.entryId||e.id)!==eid);
+ save();
+}
+function submitPersonal(){
+ return auth(function(){ submitPersonalAfterAuth(); });
+}
+function submitPersonalAfterAuth(){
+ const p=document.getElementById('personalperiod').value;
+ const h=Number(document.getElementById('personalhours').value);
+ const ph=Number(document.getElementById('personalpto').value);
+ const entryId=crypto.randomUUID();
+ if(h>0 && Number.isFinite(h)) state.personal.push({id:entryId,entryId,period:p,hours:h,date:new Date().toLocaleString(),type:'Regular'});
+ if(ph>0 && Number.isFinite(ph)) state.personalPTO.push({id:crypto.randomUUID(),entryId,period:p,hours:ph,date:new Date().toLocaleString(),type:'PTO'});
+ if(!(h>0) && !(ph>0)) return alert('Enter personal hours or PTO hours.');
+ document.getElementById('personalhours').value='';
+ document.getElementById('personalpto').value='';
+ save();
+}
+function render(){renderLoc('w17');renderLoc('w39');let pt=total(state.personal),pp=total(state.personalPTO),counted=pt+pp,r=585-counted;document.getElementById('personalStats').innerHTML=`<div class="stats"><div class="stat">Regular input<b>${fmt(pt)}</b></div><div class="stat">PTO<b>${fmt(pp)}</b></div><div class="stat">Hours counted after PTO<b>${fmt(counted)}</b>${balanceLine(counted,document.getElementById('personalperiod').value,45)}</div><div class="stat">Hours remaining<b>${fmt(r)}</b></div></div>`;document.getElementById('personalLog').innerHTML=personalCombinedLog();let all=[
+ ...state.w17.map(e=>({...e,location:'W17',category:'Regular Hours',type:'Regular'})),
+ ...state.w39.map(e=>({...e,location:'W39',category:'Regular Hours',type:'Regular'})),
+ ...state.personal.map(e=>({...e,location:'Personal',category:'Personal Hours',type:'Regular'})),
+ ...state.personalPTO.map(e=>({...e,location:'Personal',category:'PTO — Personal',type:'PTO'})),
+ ...state.pto.w17[0].map(e=>({...e,location:'W17',category:'PTO — Daily Roberts',type:'PTO'})),
+ ...state.pto.w17[1].map(e=>({...e,location:'W17',category:'PTO — Ray Young',type:'PTO'})),
+ ...state.pto.w39[0].map(e=>({...e,location:'W39',category:'PTO — Daily Roberts',type:'PTO'})),
+ ...state.pto.w39[1].map(e=>({...e,location:'W39',category:'PTO — Amari Jordan',type:'PTO'}))
+].sort((a,b)=>new Date(b.date)-new Date(a.date));
+document.getElementById('allLog').innerHTML=allLogTable(all)}
+
+function exportTrackerData(){
+ const data={
+   version:1,
+   exportedAt:new Date().toISOString(),
+   state:state
+ };
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');
+ a.href=url;
+ a.download='quarter-hours-tracker-backup.json';
+ document.body.appendChild(a);
+ a.click();
+ a.remove();
+ URL.revokeObjectURL(url);
+}
+function importTrackerData(event){
+ const file=event.target.files && event.target.files[0];
+ if(!file)return;
+ const reader=new FileReader();
+ reader.onload=function(){
+   try{
+     const data=JSON.parse(reader.result);
+     const imported=data && data.state ? data.state : data;
+     if(!imported || !Array.isArray(imported.w17) || !Array.isArray(imported.w39) ||
+        !Array.isArray(imported.personal) || !Array.isArray(imported.personalPTO) ||
+        !imported.pto || !Array.isArray(imported.pto.w17) || !Array.isArray(imported.pto.w39)){
+       throw new Error('Invalid backup');
+     }
+     if(!confirm('Restore this backup? Your current saved data will be replaced by the backup.'))return;
+     state.w17=imported.w17;
+     state.w39=imported.w39;
+     state.personal=imported.personal;
+     state.personalPTO=imported.personalPTO;
+     state.pto=imported.pto;
+     save();
+     alert('Data restored successfully.');
+   }catch(e){
+     alert('That backup file could not be restored.');
+   }finally{
+     event.target.value='';
+   }
+ };
+ reader.readAsText(file);
+}
+render()
+</script>
+
+
+<div id="passwordModal" class="password-modal" aria-hidden="true">
+  <div class="password-box" role="dialog" aria-modal="true">
+    <h3>Enter Password</h3>
+    <input id="passwordInput" type="password" inputmode="numeric" pattern="[0-9]*"
+           maxlength="4" autocomplete="off" enterkeyhint="done">
+    <div class="password-actions">
+      <button type="button" onclick="submitPassword()">OK</button>
+      <button type="button" class="danger" onclick="cancelPassword()">Cancel</button>
+    </div>
+  </div>
+</div>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js"));}</script></body></html>

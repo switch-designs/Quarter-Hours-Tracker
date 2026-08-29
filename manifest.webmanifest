@@ -1,0 +1,9 @@
+{
+  "name": "Quarter Hours Tracker",
+  "short_name": "Hours Tracker",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "description": "W17, W39 and Personal quarterly hours tracker",
+  "icons": []
+}
