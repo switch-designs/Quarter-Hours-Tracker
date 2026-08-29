@@ -403,55 +403,64 @@ function requireDataPassword(action){
  const password=prompt('Enter password to '+action+':');
  return password==='4187';
 }
+
+function dataPasswordOk(){
+  const entered = prompt("Enter password 4187 to continue:");
+  return entered === "4187";
+}
 function exportTrackerData(){
- if(!requireDataPassword('back up your data')) return;
- const data={
-   version:1,
-   exportedAt:new Date().toISOString(),
-   state:state
- };
- const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
- const url=URL.createObjectURL(blob);
- const a=document.createElement('a');
- a.href=url;
- a.download='quarter-hours-tracker-backup.json';
- document.body.appendChild(a);
- a.click();
- a.remove();
- URL.revokeObjectURL(url);
+  if(!dataPasswordOk()){
+    alert("Incorrect password. Backup cancelled.");
+    return;
+  }
+  const data={
+    version:1,
+    exportedAt:new Date().toISOString(),
+    state:state
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="quarter-hours-tracker-backup.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 function importTrackerData(event){
- if(!requireDataPassword('restore your data')){
-   event.target.value='';
-   return;
- }
- const file=event.target.files && event.target.files[0];
- if(!file)return;
- const reader=new FileReader();
- reader.onload=function(){
-   try{
-     const data=JSON.parse(reader.result);
-     const imported=data && data.state ? data.state : data;
-     if(!imported || !Array.isArray(imported.w17) || !Array.isArray(imported.w39) ||
-        !Array.isArray(imported.personal) || !Array.isArray(imported.personalPTO) ||
-        !imported.pto || !Array.isArray(imported.pto.w17) || !Array.isArray(imported.pto.w39)){
-       throw new Error('Invalid backup');
-     }
-     if(!confirm('Restore this backup? Your current saved data will be replaced by the backup.'))return;
-     state.w17=imported.w17;
-     state.w39=imported.w39;
-     state.personal=imported.personal;
-     state.personalPTO=imported.personalPTO;
-     state.pto=imported.pto;
-     save();
-     alert('Data restored successfully.');
-   }catch(e){
-     alert('That backup file could not be restored.');
-   }finally{
-     event.target.value='';
-   }
- };
- reader.readAsText(file);
+  if(!dataPasswordOk()){
+    alert("Incorrect password. Restore cancelled.");
+    event.target.value="";
+    return;
+  }
+  const file=event.target.files && event.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(){
+    try{
+      const data=JSON.parse(reader.result);
+      const imported=data && data.state ? data.state : data;
+      if(!imported || !Array.isArray(imported.w17) || !Array.isArray(imported.w39) ||
+         !Array.isArray(imported.personal) || !Array.isArray(imported.personalPTO) ||
+         !imported.pto || !Array.isArray(imported.pto.w17) || !Array.isArray(imported.pto.w39)){
+        throw new Error("Invalid backup");
+      }
+      if(!confirm("Restore this backup? Your current saved data will be replaced by the backup."))return;
+      state.w17=imported.w17;
+      state.w39=imported.w39;
+      state.personal=imported.personal;
+      state.personalPTO=imported.personalPTO;
+      state.pto=imported.pto;
+      save();
+      alert("Data restored successfully.");
+    }catch(e){
+      alert("That backup file could not be restored.");
+    }finally{
+      event.target.value="";
+    }
+  };
+  reader.readAsText(file);
 }
 render()
 </script>
