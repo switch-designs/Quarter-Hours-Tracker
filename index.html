@@ -73,7 +73,7 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 <label>Hours to add</label><input id="personalhours" type="number" step="any" placeholder="Enter any number"><h3>PTO Hours</h3><input id="personalpto" type="number" step="any" placeholder="Enter PTO hours"><button class="primary" onclick="addPersonal()">Submit Hours + PTO</button></div><div id="personalStats"></div><div id="personalLog"></div></section>
 <section id="log" class="panel"><h2>Complete Log — By Location</h2><div class="backup-tools">
   <button type="button" onclick="exportTrackerData()">Backup My Data</button>
-  <button type="button" onclick="document.getElementById('importDataFile').click()">Restore Data</button>
+  <button type="button" onclick="requestRestoreData()">Restore Data</button>
   <input id="importDataFile" type="file" accept=".json,application/json" style="display:none" onchange="importTrackerData(event)">
   <span>Backup includes all W17, W39, Personal, PTO, and pay-period entries.</span>
 </div>
@@ -428,12 +428,21 @@ function exportTrackerData(){
   a.remove();
   URL.revokeObjectURL(url);
 }
-function importTrackerData(event){
+function requestRestoreData(){
   if(!dataPasswordOk()){
     alert("Incorrect password. Restore cancelled.");
+    return;
+  }
+  window._restoreAuthorized=true;
+  document.getElementById("importDataFile").click();
+}
+function importTrackerData(event){
+  if(!window._restoreAuthorized){
+    alert("Password required. Restore cancelled.");
     event.target.value="";
     return;
   }
+  window._restoreAuthorized=false;
   const file=event.target.files && event.target.files[0];
   if(!file)return;
   const reader=new FileReader();
