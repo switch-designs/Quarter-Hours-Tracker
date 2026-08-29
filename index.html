@@ -37,7 +37,7 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 .backup-tools{margin:12px 0;padding:10px;border:1px solid #bbb;border-radius:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .backup-tools span{font-size:.85em;opacity:.8}
 </style>
-<link rel="manifest" href="./manifest.webmanifest"></head><body>
+</head><body>
 <header><h1>Quarter Hours Tracker</h1><p>July 4, 2026 – October 2, 2026</p></header>
 <div class="tabs"><button class="active" onclick="tab('w17',this)">W17</button><button onclick="tab('w39',this)">W39</button><button onclick="tab('personal',this)">Personal</button><button onclick="tab('log',this)">Log</button></div>
 <main>
@@ -399,7 +399,12 @@ function render(){renderLoc('w17');renderLoc('w39');let pt=total(state.personal)
 ].sort((a,b)=>new Date(b.date)-new Date(a.date));
 document.getElementById('allLog').innerHTML=allLogTable(all)}
 
+function requireDataPassword(action){
+ const password=prompt('Enter password to '+action+':');
+ return password==='4187';
+}
 function exportTrackerData(){
+ if(!requireDataPassword('back up your data')) return;
  const data={
    version:1,
    exportedAt:new Date().toISOString(),
@@ -416,6 +421,10 @@ function exportTrackerData(){
  URL.revokeObjectURL(url);
 }
 function importTrackerData(event){
+ if(!requireDataPassword('restore your data')){
+   event.target.value='';
+   return;
+ }
  const file=event.target.files && event.target.files[0];
  if(!file)return;
  const reader=new FileReader();
@@ -459,4 +468,4 @@ render()
     </div>
   </div>
 </div>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js"));}</script></body></html>
+</body></html>
