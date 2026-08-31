@@ -37,6 +37,12 @@ button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:point
 .backup-tools{margin:12px 0;padding:10px;border:1px solid #bbb;border-radius:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .backup-tools span{font-size:.85em;opacity:.8}
 </style>
+<meta name="theme-color" content="#17212b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Hours Tracker">
+<link rel="manifest" href="./manifest.webmanifest">
 </head><body>
 <header><h1>Quarter Hours Tracker</h1><p>July 4, 2026 – October 2, 2026</p></header>
 <div class="tabs"><button class="active" onclick="tab('w17',this)">W17</button><button onclick="tab('w39',this)">W39</button><button onclick="tab('personal',this)">Personal</button><button onclick="tab('log',this)">Log</button></div>
@@ -499,4 +505,10 @@ render()
     </div>
   </div>
 </div>
-</body></html>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./service-worker.js");
+  });
+}
+</script></body></html>

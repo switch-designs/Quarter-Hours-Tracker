@@ -1,10 +1,7 @@
-# Quarter Hours Tracker
+Quarter Hours Tracker PWA
 
-Browser-first version of the tracker.
+Host this folder over HTTPS. Android can install it from the browser's
+Install/Add to Home Screen option. iPhone can use Safari > Share > Add to
+Home Screen. It does not require Google Play or the App Store.
 
-Open `index.html` or host this folder on any static web host.
-
-The app stores entries in browser local storage. Use the built-in Backup My Data
-and Restore Data controls when moving the tracker between browsers/devices.
-
-The same website package can later be wrapped in an Android WebView/app shell.
+Backup and Restore remain protected by password 4187.
