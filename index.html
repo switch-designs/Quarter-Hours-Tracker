@@ -418,20 +418,10 @@ function render(){renderLoc('w17');renderLoc('w39');let pt=total(state.personal)
 ].sort((a,b)=>new Date(b.date)-new Date(a.date));
 document.getElementById('allLog').innerHTML=allLogTable(all)}
 
-function requireDataPassword(action){
- const password=prompt('Enter password to '+action+':');
- return password==='4187';
-}
-
-function dataPasswordOk(){
-  const entered = prompt("Enter password 4187 to continue:");
-  return entered === "4187";
-}
 function exportTrackerData(){
-  if(!dataPasswordOk()){
-    alert("Incorrect password. Backup cancelled.");
-    return;
-  }
+  return auth(function(){ exportTrackerDataAfterAuth(); });
+}
+function exportTrackerDataAfterAuth(){
   const data={
     version:1,
     exportedAt:new Date().toISOString(),
@@ -448,12 +438,10 @@ function exportTrackerData(){
   URL.revokeObjectURL(url);
 }
 function requestRestoreData(){
-  if(!dataPasswordOk()){
-    alert("Incorrect password. Restore cancelled.");
-    return;
-  }
-  window._restoreAuthorized=true;
-  document.getElementById("importDataFile").click();
+  return auth(function(){
+    window._restoreAuthorized=true;
+    document.getElementById("importDataFile").click();
+  });
 }
 function importTrackerData(event){
   if(!window._restoreAuthorized){
